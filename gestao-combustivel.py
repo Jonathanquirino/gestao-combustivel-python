@@ -12,16 +12,26 @@ Ah, e se puder me dar o custo total que eu tive, sabendo que a gasolina está R$
 """
 
 print('Gastos por Viagem')
+# Confirmação, se o usuário colocara o caracter correto
 while True:
     try:
-        quantidade_funcionarios = int(input('Quantos funcionários quer calcular?: '))
+        quantidade_funcionarios = int(float(input('Quantos funcionários quer calcular?: ')))
         break
     except ValueError:
         print("Erro: Digite um número inteiro válido.")
-nomes = []
-relatorios_funcionarios = []
-media_final = []
-funcionario = []
+nomes = [] # Aqui guardamos a listas de nomes digitados nos inputs
+relatorios_funcionarios = [] # Aqui vamos guardar os dados brutos (gasolina, km, viagens)
+media_final = [] # Aqui vamos guardar as médias (m1, m2, m3) de cada um
+valor_gasolina = []
+
+while True:
+    try:
+        gasolina = float(input(('digite o valor da gasolina hoje: ')))
+        valor_gasolina.append(gasolina)
+        break
+    except ValueError:
+        print('Erro: Digite um número inteiro válido! '
+              'Lembresse de usar . ao invés de ,')
 
 # Aqui colocamos os nomes na lista
 for quantidade in range(quantidade_funcionarios):
@@ -34,6 +44,7 @@ for i, nome in  enumerate(nomes, 1):
     km_rodados = int(input(f'O funcionário \n{i} - {nome} \nRodou quantos Km?: '))
     viagens = int(input(f'O funcionário \n{i} - {nome} \nFez quantas Viagens?: '))
 
+    # Calculo necessário para resolver as médias
     media1 = gasolina / km_rodados if km_rodados > 0 else 0
     media2 = km_rodados / viagens if viagens > 0 else 0
     media3 = gasolina / viagens if viagens > 0 else 0
@@ -41,7 +52,7 @@ for i, nome in  enumerate(nomes, 1):
     media_final += media1, media2, media3
 
     relatorio = gasolina, km_rodados, viagens
-    relatorios_funcionarios.append(relatorio)
+    relatorios_funcionarios.append(relatorio) # Devolvendo para Lista
 
     # Mantendo suas variáveis de atribuição originais
     gasolina, km_rodados, viagens = relatorio[0], relatorio[1], relatorio[2]
@@ -51,9 +62,10 @@ for i, nome in  enumerate(nomes, 1):
 
 # --- LÓGICA PARA IDENTIFICAR O MELHOR (MAIOR KM/L) ---
 todas_m1 = media_final[::3]
-melhor_media = max(todas_m1)
+melhor_media = min(todas_m1)
 quem_e_o_melhor = nomes[todas_m1.index(melhor_media)]
 
+# Comentários
 print('\n' + '='*40)
 print('       RELATÓRIO GERAL ACUMULADO')
 print('='*40)
@@ -62,7 +74,7 @@ total_gasto_empresa = 0
 
 for indice, nome in enumerate(nomes):
     # Cálculo automático para buscar o trio de médias de cada funcionário
-    posicao_base = indice * 3
+    posicao_base = indice * 3 # Pulando de 3 em 3 no indice da lista nomes
 
     m1 = media_final[posicao_base]
     m2 = media_final[posicao_base + 1]
@@ -70,15 +82,15 @@ for indice, nome in enumerate(nomes):
 
     # Acesso ao total de gasolina do relatório para o financeiro
     gasolina_total = relatorios_funcionarios[indice][0]
-    custo_motorista = gasolina_total * 5.80
+    custo_motorista = gasolina_total * valor_gasolina[0]
     total_gasto_empresa += custo_motorista
-
     print(f'\nFuncionário: {nome}')
+    print(f'Com a gasolina a {valor_gasolina[0]}')
     print(f'-> Média Km/L: {m1:.2f}Lts')
 
     # Lógica solicitada pelo cliente: média abaixo de 10 km/l gera alerta
     if m3 > 10:
-        print(f'   ⚠️ ALERTA: Rendimento baixo ({m1:.2f} Km/L)! Chamar para conversar.')
+        print(f'   ⚠️ ALERTA: Rendimento baixo ({m1:.2f} L/Km)! Chamar para conversar.')
 
     print(f'-> Média Km/Viagem: {m2:.2f}Lts')
     print(f'-> Média Lts/Viagem: {m3:.2f}Lts')
@@ -86,6 +98,6 @@ for indice, nome in enumerate(nomes):
     print('-' * 30)
 
 print('\n' + '='*40)
-print(f'MOTORISTA MAIS EFICIENTE: {quem_e_o_melhor} ({melhor_media:.2f} Km/L)')
+print(f'MOTORISTA MAIS EFICIENTE: {quem_e_o_melhor} ({melhor_media:.2f} L/Km)')
 print(f'INVESTIMENTO TOTAL EM COMBUSTÍVEL: R$ {total_gasto_empresa:.2f}')
 print('='*40)
